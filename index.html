@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive, beginner-friendly AWS three-tier architecture visualizer.">
+  <title>AWS 3-Tier Architecture Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AWS 3-tier visualizer home"><span class="aws-mark">aws</span><span><strong>3-Tier Architecture</strong><small>Understand the journey of a customer request</small></span></a>
+    <div class="top-actions">
+      <span class="status"><i></i> Interactive learning mode</span>
+      <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle theme">◐ Theme</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar" aria-label="Learning steps">
+      <div class="side-heading"><span>LEARNING PATH</span><span id="stepCount">01 / 12</span></div>
+      <nav id="stepNav" class="step-nav" aria-label="Architecture steps"></nav>
+      <div class="controls">
+        <button id="autoPlay" class="primary-button" type="button">▶ Auto-play</button>
+        <button id="prevStep" class="secondary-button" type="button">← Previous</button>
+        <button id="nextStep" class="secondary-button" type="button">Next →</button>
+        <button id="reset" class="quiet-button" type="button">↺ Reset</button>
+      </div>
+      <label class="speed-control" for="speed"><span>Animation speed</span><select id="speed"><option value="1">Normal</option><option value="1.6">Fast</option><option value=".65">Slow</option></select></label>
+      <div class="legend">
+        <h3>Moving traffic</h3>
+        <div><b class="dot blue"></b> Customer / HTTPS request</div>
+        <div><b class="dot purple"></b> API request</div>
+        <div><b class="dot green"></b> Database response</div>
+        <div><b class="dot yellow"></b> Monitoring / update</div>
+        <div><b class="dot red"></b> Blocked request</div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div class="intro-strip"><div class="ravi-avatar">R</div><div><strong>Think of this as a real online store.</strong><span>A customer visits the shop, the front desk routes them, staff process the order, and a secure records room stores the data.</span></div></div>
+      <div class="diagram-toolbar"><div><span class="eyebrow">AWS REFERENCE DESIGN</span><h1>Production-style 3-tier architecture</h1></div><span class="region-pill">Region · ap-south-1</span></div>
+      <div class="diagram-viewport" tabindex="0" aria-label="Scrollable AWS architecture diagram">
+        <svg id="architecture" viewBox="0 0 1400 850" role="img" aria-labelledby="svgTitle svgDesc" xmlns="http://www.w3.org/2000/svg">
+          <title id="svgTitle">AWS three-tier architecture across two Availability Zones</title>
+          <desc id="svgDesc">A public load balancer routes requests to private web servers, application servers, and a Multi-AZ database.</desc>
+          <defs>
+            <linearGradient id="stageBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07172d"/><stop offset="1" stop-color="#102746"/></linearGradient>
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#4d7da8" opacity=".24"/></pattern>
+            <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#55baff"/></marker>
+            <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#51e0b1"/></marker>
+            <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#bd9bff"/></marker>
+          </defs>
+          <rect width="1400" height="850" rx="22" fill="url(#stageBg)"/><rect width="1400" height="850" rx="22" fill="url(#grid)"/>
+          <g id="wires"></g><g id="components"></g><g id="packets"></g>
+        </svg>
+      </div>
+      <section class="explain-card" aria-live="polite">
+        <div class="explain-head"><span id="stepNumber" class="number-bubble">01</span><div><span class="eyebrow">WHAT YOU'RE LEARNING</span><h2 id="captionTitle">AWS Region and VPC</h2></div></div>
+        <div class="explain-grid">
+          <article><span class="mini-icon">💡</span><h3>What happens?</h3><p id="plainText"></p></article>
+          <article><span class="mini-icon">⚙</span><h3>Why is it needed?</h3><p id="whyText"></p></article>
+          <article><span class="mini-icon">⌘</span><h3>AWS technical name</h3><p id="technicalText"></p></article>
+          <article><span class="mini-icon">▶</span><h3>Watch the picture</h3><p id="watchText"></p></article>
+        </div>
+        <div class="interview"><strong>Interview question</strong><p id="interviewQuestion"></p><span id="interviewAnswer"></span></div>
+      </section>
+      <footer>Learning reference only · Validate ports, CIDRs, routing and service limits against your own workload before production use.</footer>
+    </section>
+  </main>
+</body>
+</html>
