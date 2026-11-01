@@ -1,108 +1,109 @@
 # AWS 3-Tier Architecture Visualizer
 
-A no-build, no-dependency educational website that explains a production-style AWS three-tier web application. It visualizes the path from customer → DNS / public ALB → private web tier → private application tier → isolated RDS database, plus NAT, security, monitoring and Multi-AZ availability.
+A polished, framework-free teaching dashboard that helps beginners understand how a resilient AWS three-tier web application fits together. The experience follows Ravi's online business from the public internet, through web and application tiers, to a private RDS data tier, with animated packets and plain-language analogies at every stop.
 
-> This is an educational reference diagram, not a deployable CloudFormation/Terraform template. Confirm CIDRs, ports, quotas, service behavior and security requirements for your workload.
+## Features
 
-## What it shows
+The site is a single static page built with HTML5, CSS3, vanilla JavaScript, and one inline SVG architecture board. It includes nine progressive lessons, a beginner/technical explanation toggle, autoplay with pause and reset, a complete traffic-flow animation, a failure simulation for AZ 1a, light/dark page themes, a searchable glossary, an architecture summary, responsive mobile navigation, and reduced-motion support.
 
-- One VPC (`10.0.0.0/16`) in `ap-south-1`, with two Availability Zones.
-- Public subnets for internet-facing entry and NAT.
-- Private web and application subnets.
-- Isolated database subnets with Amazon RDS for MySQL Multi-AZ.
-- Route 53, Internet Gateway, ALB, NAT Gateway, S3 Gateway Endpoint, IAM, Systems Manager, CloudWatch and SNS.
-- Security-group chaining and subnet NACL boundaries.
-- Animated customer/API/response/operations packets and interview notes.
+The architecture board is intentionally kept dark navy while the page shell can switch between a bright paper-like theme and a midnight operations theme. The stage scrolls horizontally on small screens so CIDRs and labels remain readable.
 
-## The 12 learning steps
+## Architecture
 
-1. AWS Region and VPC — the fenced network.
-2. Two Availability Zones — separate failure domains.
-3. Subnets — public, private web, private app and isolated database ranges.
-4. Internet entry and routing — IGW and route tables.
-5. Route 53 and public ALB — DNS and healthy-target routing.
-6. Private Web Tier — EC2 and Nginx frontend.
-7. Private Application Tier — Node.js / Express API.
-8. Isolated Database Tier — RDS MySQL Multi-AZ primary and standby.
-9. Complete request/response — follow a customer action end-to-end.
-10. NAT and private outbound access — updates and S3 endpoint routing.
-11. Security and operations — SG, NACL, IAM and SSM.
-12. Monitoring and resilience — CloudWatch, SNS, health checks and failover.
+The visualizer models one VPC with CIDR `10.0.0.0/16` across two Availability Zones:
 
-## Moving objects
+| Location | Public web subnet | Private app subnet | Private DB subnet | Resources |
+| --- | --- | --- | --- | --- |
+| AZ 1a | `10.0.1.0/24` | `10.0.2.0/24` | `10.0.3.0/24` | Web EC2, App EC2, RDS Writer, NAT Gateway |
+| AZ 1b | `10.0.4.0/24` | `10.0.5.0/24` | `10.0.6.0/24` | Web EC2, App EC2, RDS Reader, NAT Gateway |
 
-| Visual | Meaning | Typical path |
-|---|---|---|
-| ✉ Blue envelope | Customer HTTPS request | Customer → ALB → Web |
-| Purple diamond | API request / database query | Web → App → RDS |
-| Green packet | Successful response | RDS → App → Web → ALB |
-| Yellow packet | Software update / operations event | Private subnet → NAT / monitoring |
-| Red marker | Blocked or unauthorized traffic | Stopped by a security boundary |
+The logical request path is:
 
-## Important architecture notes
+```text
+Internet → Internet Gateway → External ALB → Web EC2
+→ Internal ALB → App EC2 → RDS Writer / RDS Reader → Response
+```
 
-- A public subnet has a route to an Internet Gateway. An instance generally also needs a public IPv4 address (or another public addressing arrangement) and permissive security controls to be internet reachable.
-- Private web and application EC2 instances do not need public IP addresses in this reference design.
-- The ALB security group should accept HTTPS from intended clients and allow the web-tier security group to receive its configured backend traffic.
-- Web-to-app and app-to-database rules should reference the source tier's security group, not `0.0.0.0/0`.
-- Security Groups are stateful. Network ACLs are stateless and operate at subnet boundaries.
-- A NAT Gateway allows private resources to initiate outbound connections; it does not allow unsolicited inbound internet connections.
-- An S3 Gateway VPC Endpoint can route supported S3 traffic privately without NAT.
-- RDS Multi-AZ standby is for high availability/failover. It is not the same as a read replica.
-- For stronger AZ resilience, deploy a NAT Gateway in each AZ and route each private subnet to its same-AZ NAT Gateway.
-- Use IAM roles and Systems Manager Session Manager for administration rather than opening SSH to the world. Store database secrets in a managed secret store such as Secrets Manager.
+Internet traffic enters through the Internet Gateway and the external Application Load Balancer. The external ALB distributes requests to healthy web servers. Web servers call the internal ALB, which distributes to private application servers. The application tier talks to RDS. The Writer handles modifications, while the Reader handles suitable read traffic. The diagram shows replication between them and explicitly does not label the Reader as a Multi-AZ standby.
+
+Private instances do not have direct public access. When they need software updates, their private route tables send outbound traffic through a NAT Gateway in a public subnet and then through the Internet Gateway. S3 is accessed through an IAM Role rather than hard-coded credentials. Security Groups protect individual resources, while Network ACLs add stateless subnet-level controls.
+
+## The nine learning steps
+
+1. **AWS Region & VPC** — Understand the city and fenced private campus.
+2. **Availability Zones** — Add Building A and Building B for resilience.
+3. **Subnets** — Separate public web, private app, and private DB departments in each building.
+4. **Internet Connectivity** — Trace Internet → IGW → External ALB and public route tables.
+5. **Web Tier** — Add Web EC2, health checks, and the Web Auto Scaling Group.
+6. **Application & Database Tiers** — Add Internal ALB, App EC2, App Auto Scaling, RDS Writer/Reader, replication, S3, and IAM.
+7. **NAT Gateway** — Show private outbound software updates through NAT and the IGW.
+8. **Security** — Add Security Groups, Network ACLs, and a blocked intruder packet.
+9. **VPN & VPC Peering** — Add Ravi's office, an encrypted VPN tunnel, a partner VPC, and private peering.
+
+## Real-world analogies
+
+The visualizer uses Region = city, VPC = fenced campus, Availability Zone = building, Subnet = department, Internet Gateway = main entrance, Route Table = direction board, Load Balancer = receptionist, Web Server = front-desk employee, App Server = back-office employee, Database = records room, NAT Gateway = controlled delivery counter, Security Group = individual door guard, Network ACL = floor security checkpoint, IAM Role = employee permission card, S3 = document warehouse, VPN = encrypted secret tunnel, VPC Peering = private road between campuses, and Auto Scaling = hiring additional employees.
+
+## Folder structure
+
+```text
+aws-3tier-visualizer/
+├── index.html
+├── css/
+│   └── style.css
+├── js/
+│   ├── app.js
+│   ├── architecture.js
+│   ├── animations.js
+│   └── steps.js
+├── assets/
+│   └── favicon.svg
+├── manus-routes.json
+├── .nojekyll
+├── LICENSE
+└── README.md
+```
+
+`architecture.js` owns canonical network data and glossary entries. `steps.js` owns the nine lesson definitions and explanation copy. `animations.js` owns packet motion and reduced-motion behavior. `app.js` owns state, controls, theme/mode switching, step rendering, autoplay, failure mode, and glossary search. The large SVG remains inline in `index.html` so it is easy to inspect and adapt.
 
 ## Run locally
 
-No install or build step is required. From the project directory:
+From the project folder:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000> in your browser. (If Python is unavailable, any static HTTP server will work.)
+Open `http://localhost:8000` in a browser. Because the project uses ES modules, use a local HTTP server instead of opening `index.html` directly from a `file://` URL.
 
-## Publish with GitHub Pages
+For the managed preview used during development, the project listens on port 3000:
 
-1. Create a GitHub repository named `aws-3tier-architecture`.
-2. Upload the contents of this folder to the repository's `main` branch (the `index.html` file must be at the repository root).
-3. Open **Settings → Pages → Build and deployment → Deploy from a branch**.
-4. Select **main** and **/ (root)**, then click **Save**.
-5. Wait for the Pages deployment and open `https://YOUR-USERNAME.github.io/aws-3tier-architecture/`.
-
-## Project structure
-
-```text
-aws-3tier-architecture/
-├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   └── app.js
-├── assets/
-├── README.md
-├── LICENSE
-└── .nojekyll
+```bash
+python3 -m http.server 3000
 ```
 
-## Customize text and colors
+## Deploy to GitHub Pages
 
-- Edit the `steps` array near the top of `js/app.js` to change step titles, plain-language descriptions, technical names, watch instructions and interview Q&A.
-- Edit `buildDiagram()` in `js/app.js` to move components, change subnet labels or add SVG paths.
-- Change CSS variables in `:root` and `:root[data-theme="light"]` in `css/style.css` to customize the page palette.
-- SVG classes such as `.public`, `.web`, `.app`, `.db`, `.wire` and `.wire.response` control diagram colors and line styles.
-- Change the `speed` selector options or the `5000` millisecond interval in `js/app.js` to adjust animation timing.
+1. Create a repository and upload the complete `aws-3tier-visualizer` folder to the `main` branch.
+2. Open **Settings → Pages**.
+3. Select **Deploy from a branch → main → / (root) → Save**.
 
-## Interview practice prompts
+The included `.nojekyll` file keeps the static paths predictable. No build step, npm install, server, database, or paid API is required.
 
-- What makes a subnet public or private?
-- Why does the ALB sit in public subnets while the web and app EC2 instances are private?
-- How do Security Groups differ from NACLs?
-- Why does a private subnet need a NAT Gateway?
-- How does RDS Multi-AZ differ from a read replica?
-- How would you investigate an unhealthy ALB target?
-- Which CloudWatch metrics and alarms would you configure?
+## Customisation
+
+To change the learning story, edit the `steps` array in `js/steps.js`. To change CIDRs, resources, or glossary terms, edit `js/architecture.js` and the matching labels in the inline SVG. To add or restyle components, use the SVG group IDs in `index.html` and the component styles in `css/style.css`. Packet paths are defined by the hidden motion paths near the end of the SVG; each moving packet references one of those paths with `mpath`.
+
+When adding a new step, update the `steps` array and the sidebar is generated automatically. If the new step adds a packet, add a packet group with an `animateMotion` element and include it in `playPacketsForStep` in `js/animations.js`.
+
+## Validation
+
+The delivery checklist covers syntax checks, progressive reveal behavior, autoplay, mode/theme controls, animations, failure simulation, responsive behavior, paths, and architecture accuracy. The project is deliberately dependency-free so the main validation command is:
+
+```bash
+for file in js/*.js; do node --check "$file"; done
+```
 
 ## License
 
-MIT. Replace `YOUR NAME` in `LICENSE` before publishing.
+Released under the MIT License. See `LICENSE`.

@@ -1,0 +1,132 @@
+export const steps = [
+  {
+    id: 1,
+    tag: 'Foundation',
+    title: 'AWS Region & VPC',
+    subtitle: 'Start with the city and the fence.',
+    analogy: "Ravi's city & fenced campus",
+    plain: "Ravi's business needs a city to live in and a fenced campus that keeps its departments organised.",
+    technical: 'An AWS Region is a geographic area. A VPC is an isolated virtual network with the address range 10.0.0.0/16.',
+    watch: 'The large region boundary appears first; the teal VPC boundary is the private campus inside it.',
+    caption: 'The campus boundary appears first. Select a later step to reveal more.',
+    reveal: 'The region and VPC boundaries are the map that everything else will live inside.',
+    technicalWatch: 'The VPC CIDR defines the private address space that is split into six subnet CIDRs later.',
+    packets: []
+  },
+  {
+    id: 2,
+    tag: 'Resilience',
+    title: 'Availability Zones',
+    subtitle: 'Give the campus a second building.',
+    analogy: 'Two buildings in one city',
+    plain: 'If one building has a problem, Ravi can still serve customers from the other building.',
+    technical: 'The VPC spans Availability Zone 1a and Availability Zone 1b. Resources are distributed across independent facilities in one Region.',
+    watch: 'Two blue building outlines appear inside the VPC. Each will receive a web, app, and database section.',
+    caption: 'Two buildings now sit inside the same private campus.',
+    reveal: 'The second building gives the architecture room to keep serving when a single building is unavailable.',
+    technicalWatch: 'Availability Zones are distinct locations with independent infrastructure; multi-AZ placement reduces a single-facility dependency.',
+    packets: []
+  },
+  {
+    id: 3,
+    tag: 'Segmentation',
+    title: 'Subnets',
+    subtitle: 'Give every building three departments.',
+    analogy: 'Front desk, back office, and records room',
+    plain: 'Public web areas meet visitors. Private app areas do the work. Private database areas hold the records.',
+    technical: 'Each AZ contains a public web subnet, private app subnet, and private DB subnet. The six CIDRs are 10.0.1.0/24 through 10.0.6.0/24 as labelled.',
+    watch: 'Gold, purple, and blue-violet bands separate the three tiers in both buildings.',
+    caption: 'Every building now has public, application-private, and database-private sections.',
+    reveal: 'The color bands make it easy to see which tier is allowed to face the internet.',
+    technicalWatch: 'Subnets are the routing and policy boundaries. Private app and DB subnets do not receive direct public access.',
+    packets: []
+  },
+  {
+    id: 4,
+    tag: 'Connectivity',
+    title: 'Internet Connectivity',
+    subtitle: 'Open one controlled front door.',
+    analogy: 'Entrance, receptionist, and direction boards',
+    plain: 'Visitors enter at the main entrance, then a receptionist sends them toward the right front desk.',
+    technical: 'Internet traffic enters through an Internet Gateway and an external Application Load Balancer. Public route tables direct 0.0.0.0/0 to the IGW.',
+    watch: 'Follow the orange envelope from the Internet to the IGW, then to the External ALB and both public subnets.',
+    caption: 'The orange request enters through the IGW and external ALB, never directly into a private tier.',
+    reveal: 'The first network rule is simple: traffic has a front door, and the front door is not a server.',
+    technicalWatch: 'The external ALB is the internet-facing entry point. Its target group will be the web servers in the public subnets.',
+    packets: ['request']
+  },
+  {
+    id: 5,
+    tag: 'Web tier',
+    title: 'Web Tier',
+    subtitle: 'Add the front-desk employees.',
+    analogy: 'Receptionists who share the queue',
+    plain: 'The external receptionist checks which front-desk employee is healthy and shares the queue between them.',
+    technical: 'The Web Auto Scaling Group manages Web EC2 instances across both public subnets. The external ALB distributes HTTP/HTTPS traffic across healthy targets.',
+    watch: 'Two Web EC2 cards light up with health checks. Envelopes fan out from the external ALB to both buildings.',
+    caption: 'Healthy web instances share the customer queue across both Availability Zones.',
+    reveal: 'Auto Scaling gives the front desk a way to grow with demand and replace unhealthy employees.',
+    technicalWatch: 'The ALB uses target health checks before routing. The ASG is spread across AZs for capacity and availability.',
+    packets: ['request', 'web', 'web-b']
+  },
+  {
+    id: 6,
+    tag: 'Core services',
+    title: 'Application & Database Tiers',
+    subtitle: 'Move the work behind the front desk.',
+    analogy: 'Back-office staff and the records room',
+    plain: 'Web employees hand business work to private back-office employees. Those employees read or update the records room.',
+    technical: 'The internal ALB routes from Web EC2 to private App EC2 targets. App servers use RDS Writer for modifications and RDS Reader for appropriate reads; replication keeps the reader supplied with data.',
+    watch: 'The purple internal ALB sits between web and app tiers. A green replication line connects RDS Writer and Reader; S3 is reached through an IAM Role.',
+    caption: 'Private work flows from the web tier through the internal ALB to app servers and RDS.',
+    reveal: 'The application and database tiers are private so customers never reach them directly.',
+    technicalWatch: 'The RDS Reader is a read replica in this teaching model, not a Multi-AZ standby. DB subnets form an RDS DB Subnet Group.',
+    packets: ['app', 'db', 'response', 'repl']
+  },
+  {
+    id: 7,
+    tag: 'Egress',
+    title: 'NAT Gateway',
+    subtitle: 'Let private servers receive updates safely.',
+    analogy: 'A controlled delivery counter',
+    plain: 'Private employees can send out for software updates, but visitors cannot walk into the back office through that counter.',
+    technical: 'Private subnet route tables send outbound internet traffic to a NAT Gateway in a public subnet, then to the IGW. Private instances keep no direct public route.',
+    watch: 'Orange update packets travel from private app areas to the NAT gateways and out through the IGW.',
+    caption: 'NAT enables outbound updates for private servers without giving them public IPs.',
+    reveal: 'NAT is an outbound doorway, not an inbound shortcut to the private tiers.',
+    technicalWatch: 'A NAT Gateway must be reachable from a public subnet and is targeted by private route tables for egress.',
+    packets: ['update']
+  },
+  {
+    id: 8,
+    tag: 'Protection',
+    title: 'Security',
+    subtitle: 'Put a guard at each door and floor.',
+    analogy: 'Door guards and floor checkpoints',
+    plain: 'Security Groups guard each resource. Network ACLs check traffic at the subnet entrance. An intruder gets stopped before reaching the campus.',
+    technical: 'Security Groups are stateful, resource-level virtual firewalls. Network ACLs are stateless, subnet-level rule lists. Both should allow only the ports and sources each tier needs.',
+    watch: 'The red intruder packet meets a red cross. Security Group and Network ACL badges appear along the campus edge.',
+    caption: 'A blocked packet shows layered controls: resource-level Security Groups and subnet-level Network ACLs.',
+    reveal: 'Security works best in layers: a door guard and a floor checkpoint have different jobs.',
+    technicalWatch: 'The diagram is conceptual: actual rule sets must be designed for the application ports, return traffic, and operational needs.',
+    packets: ['intruder']
+  },
+  {
+    id: 9,
+    tag: 'Hybrid links',
+    title: 'VPN & VPC Peering',
+    subtitle: 'Connect trusted partners privately.',
+    analogy: 'A secret tunnel and a private road',
+    plain: "Ravi's office gets an encrypted tunnel into the campus. A partner VPC uses a private road instead of the public internet.",
+    technical: 'A VPN Gateway provides encrypted connectivity from on-premises networks. VPC Peering connects two VPCs with private IP routes; both require compatible route tables and security rules.',
+    watch: 'The bottom green path links Ravi’s office to the VPN Gateway and onward to the partner VPC via private peering.',
+    caption: 'Secure hybrid and partner links are added last so the public path stays easy to understand.',
+    reveal: 'These private links extend the campus without turning every service into a public endpoint.',
+    technicalWatch: 'VPN and peering are separate patterns. Peering is non-transitive, and each side needs routes and policy that permit the intended traffic.',
+    packets: ['vpn', 'peer']
+  }
+];
+
+export function getStep(stepId) {
+  return steps.find((step) => step.id === Number(stepId)) || steps[0];
+}

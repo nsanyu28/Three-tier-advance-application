@@ -1,77 +1,266 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive, beginner-friendly AWS three-tier architecture visualizer.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071426" />
+  <meta name="description" content="An interactive visual guide to AWS three-tier architecture, built for beginners and technical learners." />
   <title>AWS 3-Tier Architecture Visualizer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script defer src="js/app.js"></script>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body data-theme="dark" data-mode="beginner">
+  <a class="skip-link" href="#main-content">Skip to visualizer</a>
   <header class="topbar">
-    <a class="brand" href="#" aria-label="AWS 3-tier visualizer home"><span class="aws-mark">aws</span><span><strong>3-Tier Architecture</strong><small>Understand the journey of a customer request</small></span></a>
-    <div class="top-actions">
-      <span class="status"><i></i> Interactive learning mode</span>
-      <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle theme">◐ Theme</button>
+    <div class="brand-lockup">
+      <div class="brand-mark" aria-hidden="true"><span>A3</span><i></i><i></i></div>
+      <div>
+        <p class="eyebrow">Cloud engineering classroom</p>
+        <a class="brand-name" href="#top">AWS 3-Tier <span>Visualizer</span></a>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="mode-switch" role="group" aria-label="Explanation mode">
+        <button class="mode-button is-active" type="button" data-mode="beginner">Beginner</button>
+        <button class="mode-button" type="button" data-mode="technical">Technical</button>
+      </div>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Switch to light theme" title="Toggle page theme"><span aria-hidden="true">◐</span></button>
+      <button class="outline-button" id="glossaryOpen" type="button"><span aria-hidden="true">⌕</span> Glossary</button>
     </div>
   </header>
 
-  <main class="app-shell">
-    <aside class="sidebar" aria-label="Learning steps">
-      <div class="side-heading"><span>LEARNING PATH</span><span id="stepCount">01 / 12</span></div>
-      <nav id="stepNav" class="step-nav" aria-label="Architecture steps"></nav>
-      <div class="controls">
-        <button id="autoPlay" class="primary-button" type="button">▶ Auto-play</button>
-        <button id="prevStep" class="secondary-button" type="button">← Previous</button>
-        <button id="nextStep" class="secondary-button" type="button">Next →</button>
-        <button id="reset" class="quiet-button" type="button">↺ Reset</button>
+  <main id="main-content" class="app-shell">
+    <aside class="learning-rail" aria-label="Learning steps">
+      <div class="rail-heading">
+        <div>
+          <p class="eyebrow">Ravi's secure campus</p>
+          <h1>Trace the request.</h1>
+        </div>
+        <span class="live-dot" aria-label="Interactive lesson live"></span>
       </div>
-      <label class="speed-control" for="speed"><span>Animation speed</span><select id="speed"><option value="1">Normal</option><option value="1.6">Fast</option><option value=".65">Slow</option></select></label>
-      <div class="legend">
-        <h3>Moving traffic</h3>
-        <div><b class="dot blue"></b> Customer / HTTPS request</div>
-        <div><b class="dot purple"></b> API request</div>
-        <div><b class="dot green"></b> Database response</div>
-        <div><b class="dot yellow"></b> Monitoring / update</div>
-        <div><b class="dot red"></b> Blocked request</div>
+      <p class="rail-intro">Nine short stops turn a production-style AWS network into a story you can follow.</p>
+      <nav class="step-nav" id="stepNav" aria-label="Nine architecture lessons"></nav>
+      <div class="rail-footer">
+        <div class="progress-label"><span>Learning progress</span><strong id="progressText">1 / 9</strong></div>
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+        <p class="rail-hint"><span aria-hidden="true">↗</span> You can pause the story at any layer.</p>
       </div>
     </aside>
 
-    <section class="workspace">
-      <div class="intro-strip"><div class="ravi-avatar">R</div><div><strong>Think of this as a real online store.</strong><span>A customer visits the shop, the front desk routes them, staff process the order, and a secure records room stores the data.</span></div></div>
-      <div class="diagram-toolbar"><div><span class="eyebrow">AWS REFERENCE DESIGN</span><h1>Production-style 3-tier architecture</h1></div><span class="region-pill">Region · ap-south-1</span></div>
-      <div class="diagram-viewport" tabindex="0" aria-label="Scrollable AWS architecture diagram">
-        <svg id="architecture" viewBox="0 0 1400 850" role="img" aria-labelledby="svgTitle svgDesc" xmlns="http://www.w3.org/2000/svg">
-          <title id="svgTitle">AWS three-tier architecture across two Availability Zones</title>
-          <desc id="svgDesc">A public load balancer routes requests to private web servers, application servers, and a Multi-AZ database.</desc>
-          <defs>
-            <linearGradient id="stageBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07172d"/><stop offset="1" stop-color="#102746"/></linearGradient>
-            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#4d7da8" opacity=".24"/></pattern>
-            <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#55baff"/></marker>
-            <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#51e0b1"/></marker>
-            <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="#bd9bff"/></marker>
-          </defs>
-          <rect width="1400" height="850" rx="22" fill="url(#stageBg)"/><rect width="1400" height="850" rx="22" fill="url(#grid)"/>
-          <g id="wires"></g><g id="components"></g><g id="packets"></g>
-        </svg>
-      </div>
-      <section class="explain-card" aria-live="polite">
-        <div class="explain-head"><span id="stepNumber" class="number-bubble">01</span><div><span class="eyebrow">WHAT YOU'RE LEARNING</span><h2 id="captionTitle">AWS Region and VPC</h2></div></div>
-        <div class="explain-grid">
-          <article><span class="mini-icon">💡</span><h3>What happens?</h3><p id="plainText"></p></article>
-          <article><span class="mini-icon">⚙</span><h3>Why is it needed?</h3><p id="whyText"></p></article>
-          <article><span class="mini-icon">⌘</span><h3>AWS technical name</h3><p id="technicalText"></p></article>
-          <article><span class="mini-icon">▶</span><h3>Watch the picture</h3><p id="watchText"></p></article>
+    <section class="workspace" id="top">
+      <div class="workspace-heading">
+        <div>
+          <p class="eyebrow accent-eyebrow">Interactive AWS runbook <span class="status-chip">No backend · runs locally</span></p>
+          <h2 id="stageTitle">A city, a campus, and a request on the move.</h2>
+          <p id="stageSubtitle">Start with the boundary that keeps Ravi's business organised.</p>
         </div>
-        <div class="interview"><strong>Interview question</strong><p id="interviewQuestion"></p><span id="interviewAnswer"></span></div>
+        <div class="workspace-actions" role="group" aria-label="Visualizer controls">
+          <button class="primary-button" id="trafficButton" type="button"><span aria-hidden="true">▶</span> Run traffic flow</button>
+          <button class="outline-button" id="failureButton" type="button"><span aria-hidden="true">⚠</span> Simulate AZ 1a failure</button>
+          <button class="icon-button" id="pauseButton" type="button" aria-pressed="false" title="Pause autoplay"><span aria-hidden="true">Ⅱ</span><span class="sr-only">Pause autoplay</span></button>
+          <button class="icon-button" id="resetButton" type="button" title="Reset visualizer"><span aria-hidden="true">↺</span><span class="sr-only">Reset visualizer</span></button>
+          <span class="control-caveat" id="failureNote">Conceptual simulation: health checks highlight the surviving path; actual failover depends on each AWS resource.</span>
+        </div>
+      </div>
+
+      <section class="diagram-card" aria-labelledby="stageTitle">
+        <div class="diagram-toolbar">
+          <div class="diagram-context"><span class="context-pip"></span><strong id="diagramStepLabel">Step 1 of 9</strong><span class="context-separator">/</span><span id="diagramContextText">AWS Region &amp; VPC</span></div>
+          <div class="diagram-toolbar-right"><span class="mode-note" id="modeNote">Plain-language mode</span><span class="diagram-key"><i class="key-line key-flow"></i> data path <i class="key-line key-secure"></i> secure link</span></div>
+        </div>
+        <div class="diagram-scroll" aria-label="Scrollable architecture diagram">
+          <svg class="architecture-diagram" id="architectureDiagram" data-step="1" viewBox="0 0 1400 850" role="img" aria-labelledby="diagramTitle diagramDesc">
+            <title id="diagramTitle">AWS three-tier architecture diagram</title>
+            <desc id="diagramDesc">A progressive architecture diagram showing a VPC, two availability zones, public web subnets, private application subnets, private database subnets, load balancers, EC2 servers, NAT gateways and an RDS writer and reader.</desc>
+            <defs>
+              <linearGradient id="canvasGradient" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0" stop-color="#08182d" />
+                <stop offset="0.55" stop-color="#0c2038" />
+                <stop offset="1" stop-color="#071426" />
+              </linearGradient>
+              <linearGradient id="vpcGradient" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#0e2a3e" stop-opacity=".6" />
+                <stop offset="1" stop-color="#0b1c31" stop-opacity=".88" />
+              </linearGradient>
+              <pattern id="dotGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+                <circle cx="1.2" cy="1.2" r="1.1" fill="#7ba6bb" opacity=".13" />
+              </pattern>
+              <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+              <filter id="cardShadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#000" flood-opacity=".25" /></filter>
+              <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#ff9c54" /></marker>
+              <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#4ee1b6" /></marker>
+              <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c391ff" /></marker>
+              <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#ff6e86" /></marker>
+            </defs>
+
+            <rect class="canvas-bg" x="0" y="0" width="1400" height="850" rx="22" fill="url(#canvasGradient)" />
+            <rect class="canvas-grid" x="0" y="0" width="1400" height="850" rx="22" fill="url(#dotGrid)" />
+            <g class="diagram-chrome">
+              <text x="36" y="40" class="svg-kicker">LIVE ARCHITECTURE BOARD</text>
+              <text x="1364" y="40" text-anchor="end" class="svg-kicker svg-mono">CIDR 10.0.0.0/16</text>
+              <line x1="36" y1="55" x2="1364" y2="55" class="chrome-rule" />
+            </g>
+
+            <g class="reveal reveal-1" data-reveal="1" id="regionBoundary">
+              <rect class="region-boundary" x="32" y="72" width="1336" height="748" rx="22" />
+              <g class="boundary-label"><rect x="52" y="85" width="178" height="28" rx="14" /><text x="70" y="104">AWS REGION · CITY</text></g>
+              <text class="region-note" x="1194" y="105">Resilient by design</text>
+            </g>
+
+            <g class="reveal reveal-1" data-reveal="1" id="vpcBoundary">
+              <rect class="vpc-boundary" x="210" y="124" width="1136" height="650" rx="20" />
+              <g class="boundary-label boundary-label-teal"><rect x="232" y="137" width="220" height="28" rx="14" /><text x="249" y="156">VPC · FENCED CAMPUS</text></g>
+              <text class="vpc-cidr svg-mono" x="1308" y="157" text-anchor="end">10.0.0.0/16</text>
+              <g class="security-pill"><rect x="1050" y="137" width="216" height="28" rx="14" /><circle cx="1066" cy="151" r="4" /><text x="1079" y="156">PRIVATE TRUST BOUNDARY</text></g>
+            </g>
+
+            <g class="reveal reveal-4" data-reveal="4" id="connectivityLayer">
+              <path class="route-wire route-wire-orange" d="M87 243 C124 243 145 205 178 205 C198 205 208 205 250 205" marker-end="url(#arrowOrange)" />
+              <path class="route-wire route-wire-orange" d="M320 205 C353 205 369 229 392 270" marker-end="url(#arrowOrange)" />
+              <path class="route-wire route-wire-orange" d="M320 205 C520 205 716 224 880 270" marker-end="url(#arrowOrange)" />
+              <g class="route-label"><rect x="104" y="219" width="106" height="24" rx="12" /><text x="157" y="235" text-anchor="middle">HTTPS :443</text></g>
+              <g class="route-label"><rect x="343" y="219" width="104" height="24" rx="12" /><text x="395" y="235" text-anchor="middle">route table</text></g>
+            </g>
+
+            <g class="reveal reveal-4" data-reveal="4" id="internetNode">
+              <g class="resource-card internet-card" transform="translate(44 250)"><rect width="92" height="74" rx="16" /><circle cx="46" cy="26" r="16" class="icon-circle icon-orange" /><path d="M32 27c8-15 23-15 29 0M36 34c6 8 15 8 21 0M46 11v30M30 26h32" class="icon-stroke" /><text x="46" y="59" text-anchor="middle" class="resource-title">Internet</text></g>
+              <g class="resource-card gateway-card" transform="translate(250 171)"><rect width="70" height="70" rx="16" /><circle cx="35" cy="26" r="15" class="icon-circle icon-orange" /><path d="M27 26h16M38 20l6 6-6 6M27 36h16" class="icon-stroke" /><text x="35" y="58" text-anchor="middle" class="resource-title">IGW</text></g>
+              <g class="resource-card alb-card" transform="translate(250 255)"><rect width="92" height="62" rx="16" /><circle cx="22" cy="31" r="10" class="icon-circle icon-orange" /><circle cx="70" cy="31" r="10" class="icon-circle icon-orange" /><path d="M32 31h28" class="icon-stroke" /><text x="46" y="51" text-anchor="middle" class="tiny-title">External ALB</text></g>
+              <g class="route-table-card" transform="translate(178 342)"><rect width="142" height="46" rx="12" /><text x="14" y="20" class="tiny-label">PUBLIC ROUTE TABLE</text><text x="14" y="35" class="svg-mono">0.0.0.0/0 → IGW</text></g>
+              <g class="route-table-card private-route-card" transform="translate(178 398)"><rect width="142" height="56" rx="12" /><text x="14" y="20" class="tiny-label">PRIVATE ROUTE TABLES</text><text x="14" y="36" class="svg-mono">app / db → NAT</text><text x="14" y="48" class="tiny-route-note">outbound only</text></g>
+            </g>
+
+            <g class="reveal reveal-2" data-reveal="2" id="availabilityZones">
+              <g class="az-boundary az-a" id="azA"><rect x="352" y="184" width="424" height="558" rx="18" /><g class="az-label"><rect x="372" y="198" width="172" height="34" rx="17" /><text x="389" y="220">AZ 1a · BUILDING A</text></g><text id="statusA" x="751" y="220" text-anchor="end" class="az-status">healthy</text></g>
+              <g class="az-boundary az-b" id="azB"><rect x="816" y="184" width="424" height="558" rx="18" /><g class="az-label"><rect x="836" y="198" width="172" height="34" rx="17" /><text x="853" y="220">AZ 1b · BUILDING B</text></g><text id="statusB" x="1215" y="220" text-anchor="end" class="az-status">healthy</text></g>
+            </g>
+
+            <g class="reveal reveal-3" data-reveal="3" id="subnetLayer">
+              <g class="subnet public-subnet subnet-a"><rect x="372" y="248" width="384" height="116" rx="14" /><text x="392" y="272" class="subnet-title">PUBLIC WEB SUBNET</text><text x="392" y="294" class="subnet-cidr svg-mono">10.0.1.0/24</text><g class="subnet-route"><circle cx="726" cy="272" r="11" /><path d="M720 272h12M726 266v12" /></g><text x="392" y="348" class="subnet-note">internet-facing tier</text></g>
+              <g class="subnet public-subnet subnet-b"><rect x="836" y="248" width="384" height="116" rx="14" /><text x="856" y="272" class="subnet-title">PUBLIC WEB SUBNET</text><text x="856" y="294" class="subnet-cidr svg-mono">10.0.4.0/24</text><g class="subnet-route"><circle cx="1190" cy="272" r="11" /><path d="M1184 272h12M1190 266v12" /></g><text x="856" y="348" class="subnet-note">internet-facing tier</text></g>
+              <g class="subnet app-subnet subnet-a"><rect x="372" y="386" width="384" height="124" rx="14" /><text x="392" y="411" class="subnet-title">PRIVATE APP SUBNET</text><text x="392" y="433" class="subnet-cidr svg-mono">10.0.2.0/24</text><text x="392" y="490" class="subnet-note">no public IPs · service tier</text></g>
+              <g class="subnet app-subnet subnet-b"><rect x="836" y="386" width="384" height="124" rx="14" /><text x="856" y="411" class="subnet-title">PRIVATE APP SUBNET</text><text x="856" y="433" class="subnet-cidr svg-mono">10.0.5.0/24</text><text x="856" y="490" class="subnet-note">no public IPs · service tier</text></g>
+              <g class="subnet db-subnet subnet-a"><rect x="372" y="532" width="384" height="176" rx="14" /><text x="392" y="558" class="subnet-title">PRIVATE DB SUBNET</text><text x="392" y="580" class="subnet-cidr svg-mono">10.0.3.0/24</text><text x="392" y="687" class="subnet-note">DB subnet group · data tier</text></g>
+              <g class="subnet db-subnet subnet-b"><rect x="836" y="532" width="384" height="176" rx="14" /><text x="856" y="558" class="subnet-title">PRIVATE DB SUBNET</text><text x="856" y="580" class="subnet-cidr svg-mono">10.0.6.0/24</text><text x="856" y="687" class="subnet-note">DB subnet group · data tier</text></g>
+            </g>
+
+            <g class="reveal reveal-5" data-reveal="5" id="webTierLayer">
+              <path class="route-wire route-wire-orange soft-wire" d="M433 317 C433 326 455 332 478 332" marker-end="url(#arrowOrange)" />
+              <path class="route-wire route-wire-orange soft-wire" d="M897 317 C897 326 919 332 942 332" marker-end="url(#arrowOrange)" />
+              <g class="resource-card server-card" id="webServerA" transform="translate(485 278)"><rect width="118" height="64" rx="14" /><circle cx="24" cy="32" r="13" class="icon-circle icon-blue" /><path d="M18 28h12M18 34h12M21 39h6" class="icon-stroke" /><text x="44" y="28" class="resource-title">Web EC2</text><text x="44" y="45" class="resource-subtitle">healthy</text></g>
+              <g class="resource-card server-card" transform="translate(949 278)"><rect width="118" height="64" rx="14" /><circle cx="24" cy="32" r="13" class="icon-circle icon-blue" /><path d="M18 28h12M18 34h12M21 39h6" class="icon-stroke" /><text x="44" y="28" class="resource-title">Web EC2</text><text x="44" y="45" class="resource-subtitle">healthy</text></g>
+              <g class="autoscale-card" transform="translate(610 266)"><rect width="120" height="80" rx="14" /><text x="60" y="28" text-anchor="middle" class="tiny-label">WEB ASG</text><path d="M43 48c7-11 24-11 31 0M49 50c0-7 5-12 12-12s12 5 12 12" class="asg-icon" /><text x="60" y="68" text-anchor="middle" class="tiny-title">auto scale</text></g>
+              <g class="health-check"><circle cx="472" cy="356" r="8" /><path d="m468 356 3 3 6-7" /></g><text x="486" y="360" class="health-label">health checks</text>
+              <g class="health-check"><circle cx="936" cy="356" r="8" /><path d="m932 356 3 3 6-7" /></g><text x="950" y="360" class="health-label">health checks</text>
+              <path class="route-wire route-wire-purple" d="M545 453 C590 453 605 451 630 451" marker-end="url(#arrowPurple)" />
+              <path class="route-wire route-wire-purple" d="M695 451 C760 451 779 451 834 451" marker-end="url(#arrowPurple)" />
+            </g>
+
+            <g class="reveal reveal-6" data-reveal="6" id="appDbLayer">
+              <g class="resource-card alb-card internal-alb" transform="translate(604 418)"><rect width="126" height="66" rx="16" /><circle cx="23" cy="33" r="10" class="icon-circle icon-purple" /><circle cx="103" cy="33" r="10" class="icon-circle icon-purple" /><path d="M33 33h60" class="icon-stroke" /><text x="63" y="23" text-anchor="middle" class="tiny-label">INTERNAL</text><text x="63" y="51" text-anchor="middle" class="tiny-title">ALB</text></g>
+              <g class="resource-card server-card app-server" id="appServerA" transform="translate(477 428)"><rect width="116" height="62" rx="14" /><circle cx="23" cy="31" r="13" class="icon-circle icon-purple" /><path d="M17 27h12M17 33h12M20 38h6" class="icon-stroke" /><text x="43" y="28" class="resource-title">App EC2</text><text x="43" y="45" class="resource-subtitle">private</text></g>
+              <g class="resource-card server-card app-server" transform="translate(950 428)"><rect width="116" height="62" rx="14" /><circle cx="23" cy="31" r="13" class="icon-circle icon-purple" /><path d="M17 27h12M17 33h12M20 38h6" class="icon-stroke" /><text x="43" y="28" class="resource-title">App EC2</text><text x="43" y="45" class="resource-subtitle">private</text></g>
+              <g class="autoscale-card" transform="translate(1081 398)"><rect width="112" height="78" rx="14" /><text x="56" y="27" text-anchor="middle" class="tiny-label">APP ASG</text><path d="M40 47c7-11 24-11 31 0M46 49c0-7 5-12 12-12s12 5 12 12" class="asg-icon asg-purple" /><text x="56" y="66" text-anchor="middle" class="tiny-title">auto scale</text></g>
+              <path class="route-wire route-wire-purple" d="M535 492 C535 520 535 548 535 606" marker-end="url(#arrowPurple)" />
+              <path class="route-wire route-wire-purple" d="M1008 492 C1008 520 1008 548 1008 606" marker-end="url(#arrowPurple)" />
+              <g class="resource-card rds-card" id="rdsWriter" transform="translate(442 604)"><rect width="144" height="70" rx="16" /><circle cx="25" cy="35" r="15" class="icon-circle icon-data" /><path d="M17 31c0-7 16-7 16 0v9c0 7-16 7-16 0zM17 31c0 7 16 7 16 0" class="icon-stroke" /><text x="51" y="29" class="resource-title">RDS Writer</text><text x="51" y="48" class="resource-subtitle">modifications</text></g>
+              <g class="resource-card rds-card" transform="translate(906 604)"><rect width="144" height="70" rx="16" /><circle cx="25" cy="35" r="15" class="icon-circle icon-data" /><path d="M17 31c0-7 16-7 16 0v9c0 7-16 7-16 0zM17 31c0 7 16 7 16 0" class="icon-stroke" /><text x="51" y="29" class="resource-title">RDS Reader</text><text x="51" y="48" class="resource-subtitle">read traffic</text></g>
+              <path id="replicationWire" class="route-wire route-wire-green" d="M590 640 C690 606 810 606 906 640" marker-end="url(#arrowGreen)" />
+              <g class="replication-label"><rect x="661" y="595" width="126" height="24" rx="12" /><text x="724" y="611" text-anchor="middle">async replication</text></g>
+              <g class="resource-card s3-card" transform="translate(1250 302)"><rect width="76" height="84" rx="16" /><path d="M26 51c-10 0-14-14-3-18 0-12 17-17 23-6 12-2 17 17 5 20H26z" class="s3-cloud" /><path d="M29 32h19M29 39h19M29 46h19" class="icon-stroke" /><text x="38" y="70" text-anchor="middle" class="tiny-title">S3</text></g>
+              <g class="resource-card iam-card" transform="translate(1248 408)"><rect width="80" height="70" rx="16" /><circle cx="40" cy="26" r="13" class="icon-circle icon-green" /><path d="M34 27h12M40 21v12" class="icon-stroke" /><text x="40" y="52" text-anchor="middle" class="tiny-title">IAM Role</text></g>
+              <path class="route-wire route-wire-green soft-wire" d="M1168 437 C1210 437 1220 368 1250 350" marker-end="url(#arrowGreen)" />
+            </g>
+
+            <g class="reveal reveal-7" data-reveal="7" id="natLayer">
+              <g class="resource-card nat-card" id="natA" transform="translate(665 195)"><rect width="90" height="62" rx="15" /><circle cx="22" cy="31" r="12" class="icon-circle icon-orange" /><path d="M16 31h12M22 25v12M22 25l-4 4M22 37l4-4" class="icon-stroke" /><text x="51" y="29" class="resource-title">NAT GW</text><text x="51" y="45" class="resource-subtitle">AZ 1a</text></g>
+              <g class="resource-card nat-card" transform="translate(1129 195)"><rect width="90" height="62" rx="15" /><circle cx="22" cy="31" r="12" class="icon-circle icon-orange" /><path d="M16 31h12M22 25v12M22 25l-4 4M22 37l4-4" class="icon-stroke" /><text x="51" y="29" class="resource-title">NAT GW</text><text x="51" y="45" class="resource-subtitle">AZ 1b</text></g>
+              <path class="route-wire route-wire-orange dashed-wire" d="M535 390 C600 340 650 300 690 256" marker-end="url(#arrowOrange)" />
+              <path class="route-wire route-wire-orange dashed-wire" d="M1008 390 C1060 340 1110 300 1155 256" marker-end="url(#arrowOrange)" />
+              <g class="route-label"><rect x="572" y="316" width="132" height="24" rx="12" /><text x="638" y="332" text-anchor="middle">outbound only</text></g>
+            </g>
+
+            <g class="reveal reveal-8" data-reveal="8" id="securityLayer">
+              <g class="security-badge" transform="translate(372 716)"><rect width="174" height="34" rx="17" /><circle cx="20" cy="17" r="8" /><path d="M16 17h8M20 13v8" /><text x="35" y="22">SECURITY GROUPS</text></g>
+              <g class="security-badge nacl-badge" transform="translate(558 716)"><rect width="144" height="34" rx="17" /><circle cx="20" cy="17" r="8" /><path d="M16 17h8M20 13v8" /><text x="35" y="22">NETWORK ACLs</text></g>
+              <g class="intruder-node" transform="translate(68 590)"><circle cx="30" cy="30" r="27" /><text x="30" y="38" text-anchor="middle">😈</text><text x="30" y="76" text-anchor="middle" class="intruder-label">blocked traffic</text></g>
+              <path class="route-wire route-wire-red" d="M98 619 C150 619 174 550 220 520" marker-end="url(#arrowRed)" />
+              <g class="block-cross" transform="translate(197 534)"><circle cx="22" cy="22" r="18" /><path d="m15 15 14 14m0-14L15 29" /></g>
+              <g class="security-callout" transform="translate(1000 718)"><rect width="224" height="34" rx="17" /><text x="112" y="22" text-anchor="middle">least-privilege paths only</text></g>
+            </g>
+
+            <g class="reveal reveal-9" data-reveal="9" id="hybridLayer">
+              <g class="office-node" transform="translate(54 707)"><rect width="126" height="62" rx="15" /><circle cx="24" cy="31" r="13" class="icon-circle icon-green" /><path d="M18 31h12M24 25v12" class="icon-stroke" /><text x="46" y="28" class="resource-title">Ravi's office</text><text x="46" y="45" class="resource-subtitle">on-premises</text></g>
+              <g class="vpn-node" transform="translate(208 707)"><rect width="102" height="62" rx="15" /><circle cx="23" cy="31" r="13" class="icon-circle icon-green" /><path d="M18 31h10M20 27l-4 4 4 4M27 27l4 4-4 4" class="icon-stroke" /><text x="54" y="28" class="resource-title">VPN GW</text><text x="54" y="45" class="resource-subtitle">encrypted</text></g>
+              <g class="partner-node" transform="translate(1218 693)"><rect width="126" height="76" rx="15" /><circle cx="23" cy="31" r="13" class="icon-circle icon-green" /><path d="M18 31h10M20 27l-4 4 4 4M27 27l4 4-4 4" class="icon-stroke" /><text x="46" y="28" class="resource-title">Partner VPC</text><text x="46" y="45" class="resource-subtitle">private road</text></g>
+              <path class="route-wire route-wire-green secure-wire" d="M180 738 H208" marker-end="url(#arrowGreen)" />
+              <path class="route-wire route-wire-green secure-wire" d="M310 738 C480 768 950 768 1218 728" marker-end="url(#arrowGreen)" />
+              <g class="route-label"><rect x="607" y="754" width="162" height="24" rx="12" /><text x="688" y="770" text-anchor="middle">VPC peering · private</text></g>
+              <g class="route-label vpn-label"><rect x="323" y="714" width="138" height="24" rx="12" /><text x="392" y="730" text-anchor="middle">encrypted tunnel</text></g>
+            </g>
+
+            <g class="packets" aria-hidden="true">
+              <path id="path-request" class="motion-path" d="M78 278 C130 278 150 205 250 205" />
+              <path id="path-web" class="motion-path" d="M320 205 C400 205 422 270 485 310" />
+              <path id="path-web-b" class="motion-path" d="M320 205 C620 205 780 235 949 310" />
+              <path id="path-app" class="motion-path" d="M535 459 C570 459 598 451 630 451" />
+              <path id="path-db" class="motion-path" d="M695 451 C790 451 945 458 1008 605" />
+              <path id="path-response" class="motion-path" d="M1008 605 C945 458 790 451 695 451" />
+              <path id="path-repl" class="motion-path" d="M590 640 C690 606 810 606 906 640" />
+              <path id="path-update" class="motion-path" d="M535 450 C595 380 656 295 690 256" />
+              <path id="path-intruder" class="motion-path" d="M98 619 C150 619 174 550 220 520" />
+              <path id="path-vpn" class="motion-path" d="M180 738 H208" />
+              <path id="path-peer" class="motion-path" d="M310 738 C600 790 1000 780 1218 728" />
+              <g class="packet packet-request" data-packet="request"><text>✉</text><animateMotion dur="2.8s" begin="indefinite" repeatCount="1"><mpath href="#path-request" /></animateMotion></g>
+              <g class="packet packet-request packet-web" data-packet="web"><text>✉</text><animateMotion dur="2.3s" begin="indefinite" repeatCount="1"><mpath href="#path-web" /></animateMotion></g>
+              <g class="packet packet-request packet-web-b" data-packet="web-b"><text>✉</text><animateMotion dur="2.5s" begin="indefinite" repeatCount="1"><mpath href="#path-web-b" /></animateMotion></g>
+              <g class="packet packet-data" data-packet="app"><text>💾</text><animateMotion dur="2s" begin="indefinite" repeatCount="1"><mpath href="#path-app" /></animateMotion></g>
+              <g class="packet packet-data" data-packet="db"><text>💾</text><animateMotion dur="2.4s" begin="indefinite" repeatCount="1"><mpath href="#path-db" /></animateMotion></g>
+              <g class="packet packet-data" data-packet="response"><text>↩</text><animateMotion dur="2.4s" begin="indefinite" repeatCount="1"><mpath href="#path-response" /></animateMotion></g>
+              <g class="packet packet-replication" data-packet="repl"><text>🔁</text><animateMotion dur="2.7s" begin="indefinite" repeatCount="indefinite"><mpath href="#path-repl" /></animateMotion></g>
+              <g class="packet packet-update" data-packet="update"><text>📦</text><animateMotion dur="2.5s" begin="indefinite" repeatCount="1"><mpath href="#path-update" /></animateMotion></g>
+              <g class="packet packet-intruder" data-packet="intruder"><text>😈</text><animateMotion dur="1.8s" begin="indefinite" repeatCount="1"><mpath href="#path-intruder" /></animateMotion></g>
+              <g class="packet packet-vpn" data-packet="vpn"><text>🔒</text><animateMotion dur="2.2s" begin="indefinite" repeatCount="indefinite"><mpath href="#path-vpn" /></animateMotion></g>
+              <g class="packet packet-peer" data-packet="peer"><text>🤝</text><animateMotion dur="3s" begin="indefinite" repeatCount="indefinite"><mpath href="#path-peer" /></animateMotion></g>
+            </g>
+
+            <g class="diagram-legend reveal reveal-4" data-reveal="4" transform="translate(48 372)"><rect width="102" height="126" rx="16" /><text x="16" y="24" class="legend-title">PACKETS</text><text x="16" y="49">✉ <tspan>request</tspan></text><text x="16" y="70">💾 <tspan>data</tspan></text><text x="16" y="91">🔁 <tspan>replicate</tspan></text><text x="16" y="112">📦 <tspan>update</tspan></text></g>
+          </svg>
+        </div>
+        <div class="diagram-caption"><span><strong>Reading the board:</strong> <span id="captionText">The campus boundary appears first. Select a later step to reveal more.</span></span><span class="caption-tip"><span aria-hidden="true">⌁</span> Lines are drawn behind labels to keep the story readable.</span></div>
       </section>
-      <footer>Learning reference only · Validate ports, CIDRs, routing and service limits against your own workload before production use.</footer>
+
+      <section class="explanation-card" aria-live="polite" aria-atomic="true">
+        <div class="explanation-number" id="explanationNumber">01</div>
+        <div class="explanation-content">
+          <div class="explanation-heading"><div><p class="eyebrow accent-eyebrow">Step <span id="explanationStep">01</span> · <span id="explanationTag">Foundation</span></p><h3 id="explanationTitle">AWS Region &amp; VPC</h3></div><span class="analogy-badge" id="analogyBadge">Ravi's city &amp; fenced campus</span></div>
+          <div class="explanation-columns"><div><p class="mini-label">In plain words</p><p id="plainText">Ravi's business needs a city to live in and a fenced campus that keeps its departments organised.</p></div><div><p class="mini-label">Technical explanation</p><p id="technicalText">An AWS Region is a geographic area. A VPC is an isolated virtual network with the address range 10.0.0.0/16.</p></div><div><p class="mini-label">Watch the picture</p><p id="watchText">The large region boundary appears first; the teal VPC boundary is the private campus inside it.</p></div></div>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel summary-panel">
+          <div class="panel-heading"><div><p class="eyebrow">At a glance</p><h3>Architecture summary</h3></div><span class="summary-spark" aria-hidden="true">⌁</span></div>
+          <div class="summary-grid"><div class="summary-stat"><strong>2</strong><span>Availability Zones</span></div><div class="summary-stat"><strong>6</strong><span>Subnets</span></div><div class="summary-stat"><strong>3</strong><span>Application tiers</span></div><div class="summary-stat"><strong>2</strong><span>Load balancers</span></div><div class="summary-stat"><strong>2</strong><span>Auto Scaling groups</span></div><div class="summary-stat"><strong>1 + 1</strong><span>Writer + Reader DB</span></div></div>
+          <div class="summary-note"><span class="note-icon" aria-hidden="true">i</span><span><strong>Accuracy note:</strong> the RDS Reader is shown as a read replica for appropriate read traffic. It is not a Multi-AZ standby.</span></div>
+        </article>
+        <article class="panel legend-panel"><div class="panel-heading"><div><p class="eyebrow">Telemetry</p><h3>Moving-object legend</h3></div><span class="legend-live"><i></i> live</span></div><div class="object-legend"><div><b>✉</b><span>Customer request</span></div><div><b>💾</b><span>App / DB data</span></div><div><b>🔁</b><span>Replication</span></div><div><b>📦</b><span>Software update</span></div><div><b>😈</b><span>Intruder</span></div><div><b>🔒</b><span>VPN tunnel</span></div><div><b>🤝</b><span>VPC peering</span></div></div></article>
+      </section>
     </section>
   </main>
+
+  <div class="modal-backdrop" id="glossaryModal" hidden>
+    <section class="glossary-modal" role="dialog" aria-modal="true" aria-labelledby="glossaryTitle">
+      <div class="modal-heading"><div><p class="eyebrow">Reference shelf</p><h2 id="glossaryTitle">Searchable AWS glossary</h2><p>Every term gets a definition, an analogy, and a job in Ravi's campus.</p></div><button class="icon-button" id="glossaryClose" type="button" aria-label="Close glossary">×</button></div>
+      <label class="search-field"><span aria-hidden="true">⌕</span><input id="glossarySearch" type="search" placeholder="Search VPC, NAT, RDS…" autocomplete="off" /><kbd>ESC</kbd></label>
+      <div class="glossary-list" id="glossaryList"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
