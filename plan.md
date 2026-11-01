@@ -1,7 +1,7 @@
 # AWS 3-Tier Architecture Visualizer — Implementation Plan
 
 ## Scope
-Build a static, framework-free educational website that visualizes Ravi's AWS three-tier web application architecture. The project must run from a simple static server and remain suitable for GitHub Pages.
+Build a static, framework-free educational website that visualizes Sanyukta's AWS three-tier web application architecture. The project must run from a simple static server and remain suitable for GitHub Pages.
 
 ## Implementation approach
 - Use a semantic HTML shell with a compact sidebar, responsive header, explanatory content cards, glossary drawer, and inline SVG diagram.

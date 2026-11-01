@@ -1,6 +1,6 @@
 # AWS 3-Tier Architecture Visualizer
 
-A polished, framework-free teaching dashboard that helps beginners understand how a resilient AWS three-tier web application fits together. The experience follows Ravi's online business from the public internet, through web and application tiers, to a private RDS data tier, with animated packets and plain-language analogies at every stop.
+A polished, framework-free teaching dashboard that helps beginners understand how a resilient AWS three-tier web application fits together. The experience follows Sanyukta's online business from the public internet, through web and application tiers, to a private RDS data tier, with animated packets and plain-language analogies at every stop.
 
 ## Features
 
@@ -38,7 +38,7 @@ Private instances do not have direct public access. When they need software upda
 6. **Application & Database Tiers** — Add Internal ALB, App EC2, App Auto Scaling, RDS Writer/Reader, replication, S3, and IAM.
 7. **NAT Gateway** — Show private outbound software updates through NAT and the IGW.
 8. **Security** — Add Security Groups, Network ACLs, and a blocked intruder packet.
-9. **VPN & VPC Peering** — Add Ravi's office, an encrypted VPN tunnel, a partner VPC, and private peering.
+9. **VPN & VPC Peering** — Add Sanyukta's office, an encrypted VPN tunnel, a partner VPC, and private peering.
 
 ## Real-world analogies
 

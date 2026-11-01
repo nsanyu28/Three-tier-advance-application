@@ -1,6 +1,6 @@
 # Delivery checklist
 
-- [x] The page explains Ravi's AWS story with simple analogies and provides Beginner/Technical modes.
+- [x] The page explains Sanyukta's AWS story with simple analogies and provides Beginner/Technical modes.
 - [x] The diagram uses one inline SVG with `viewBox="0 0 1400 850"`, dark navy gradient, dot grid, clear Region/VPC/AZ/subnet boundaries, readable labels, and responsive horizontal scrolling.
 - [x] The architecture includes VPC `10.0.0.0/16`; AZ 1a and AZ 1b; six exact public/private subnet CIDRs; Internet Gateway; route tables; external/internal ALBs; Web/App Auto Scaling Groups; Web/App EC2 instances; RDS Writer/Reader; DB subnet group; S3; IAM role; two NAT gateways; Security Groups; and Network ACLs.
 - [x] The logical traffic path is Internet → IGW → External ALB → Web Server → Internal ALB → App Server → RDS → response, with private tiers remaining private and outbound access using NAT.
